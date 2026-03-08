@@ -1,0 +1,232 @@
+import React, { useState } from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  StatusBar,
+} from 'react-native';
+import { Feather } from '@expo/vector-icons';
+
+// Types
+type Post = {
+  id: string;
+  title: string;
+  score: number;
+  commentCount: number;
+  timestamp: string; // e.g., "2h ago"
+  thumbnail?: string; // optional image URL
+  authorId: string;   // random ID displayed as "Anonymous <id>"
+};
+
+// Generate dummy data
+const generateDummyPosts = (): Post[] => {
+  const titles = [
+    'What is the best programming language for beginners?',
+    'Anonymous board culture explained',
+    'Rate my setup (cable management NSFW)',
+    'Does anyone else remember old internet forums?',
+    'Post your favorite obscure memes',
+    'Tips for staying anonymous online',
+  ];
+  const thumbnails = [
+    'https://picsum.photos/100/100?random=1',
+    'https://picsum.photos/100/100?random=2',
+    'https://picsum.photos/100/100?random=3',
+    undefined,
+    'https://picsum.photos/100/100?random=4',
+    undefined,
+  ];
+
+  return Array.from({ length: 20 }, (_, i) => ({
+    id: i.toString(),
+    title: titles[i % titles.length],
+    score: Math.floor(Math.random() * 500) + 1,
+    commentCount: Math.floor(Math.random() * 100),
+    timestamp: `${Math.floor(Math.random() * 10) + 1}h ago`,
+    thumbnail: thumbnails[i % thumbnails.length],
+    authorId: Math.random().toString(36).substring(2, 8),
+  }));
+};
+
+// Individual Post Card
+const PostCard = ({ post }: { post: Post }) => {
+  const [voteStatus, setVoteStatus] = useState<'up' | 'down' | null>(null);
+  const [score, setScore] = useState(post.score);
+
+  const handleVote = (type: 'up' | 'down') => {
+    if (voteStatus === type) {
+      // Undo vote
+      setVoteStatus(null);
+      setScore(post.score);
+    } else {
+      // New vote
+      const change = type === 'up' ? 1 : -1;
+      const previousChange = voteStatus === 'up' ? 1 : voteStatus === 'down' ? -1 : 0;
+      setScore(post.score + change - previousChange);
+      setVoteStatus(type);
+    }
+  };
+
+  return (
+    <View style={styles.card}>
+      {/* Left: voting arrows and score */}
+      <View style={styles.voteContainer}>
+        <TouchableOpacity onPress={() => handleVote('up')}>
+          <Feather
+            name="arrow-up"
+            size={24}
+            color={voteStatus === 'up' ? '#FF4500' : '#878A8C'}
+          />
+        </TouchableOpacity>
+        <Text style={styles.scoreText}>{score}</Text>
+        <TouchableOpacity onPress={() => handleVote('down')}>
+          <Feather
+            name="arrow-down"
+            size={24}
+            color={voteStatus === 'down' ? '#7193FF' : '#878A8C'}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Middle: title and metadata */}
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>{post.title}</Text>
+        <View style={styles.metadata}>
+          <Text style={styles.author}>Anonymous {post.authorId}</Text>
+          <Text style={styles.timestamp}> • {post.timestamp}</Text>
+        </View>
+        <View style={styles.commentRow}>
+          <Feather name="message-circle" size={16} color="#818384" />
+          <Text style={styles.commentCount}>{post.commentCount} comments</Text>
+        </View>
+      </View>
+
+      {/* Right: thumbnail (if any) */}
+      {post.thumbnail && (
+        <Image source={{ uri: post.thumbnail }} style={styles.thumbnail} />
+      )}
+    </View>
+  );
+};
+
+// Main App Component
+export default function App() {
+  const [posts] = useState<Post[]>(generateDummyPosts);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      {/* Header / Board Title */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>/b/ - Random</Text>
+        <Text style={styles.headerSubtitle}>anonymous discussion</Text>
+      </View>
+
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <PostCard post={item} />}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+      />
+    </SafeAreaView>
+  );
+}
+
+// Styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#DAE0E6', // Reddit light grey background
+  },
+  header: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EDEFF1',
+    marginBottom: 8,
+    marginTop: 30,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1A1A1B',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#7C7C7C',
+    marginTop: 2,
+  },
+  listContent: {
+    paddingHorizontal: 8,
+    paddingBottom: 16,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    marginVertical: 4,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  voteContainer: {
+    alignItems: 'center',
+    marginRight: 12,
+    width: 40,
+  },
+  scoreText: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#1A1A1B',
+    marginVertical: 4,
+  },
+  contentContainer: {
+    flex: 1,
+    marginRight: 8,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1A1A1B',
+    marginBottom: 4,
+  },
+  metadata: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  author: {
+    fontSize: 12,
+    color: '#0079D3', // Reddit link blue
+    fontWeight: '500',
+  },
+  timestamp: {
+    fontSize: 12,
+    color: '#7C7C7C',
+  },
+  commentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  commentCount: {
+    fontSize: 12,
+    color: '#818384',
+    marginLeft: 4,
+  },
+  thumbnail: {
+    width: 70,
+    height: 70,
+    borderRadius: 4,
+    backgroundColor: '#EDEFF1',
+  },
+});
