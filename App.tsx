@@ -1,13 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
+import * as React from 'react';
+import TelaDescorbrirSenha from 'screens/TelaDescorbrirSenha';
+import TelaLogin from 'screens/TelaLogin';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-import './global.css';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <ScreenContent title="Home" path="App.tsx"></ScreenContent>
-      <StatusBar style="auto" />
-    </SafeAreaProvider>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Seila" component={TelaLogin} />
+        <Stack.Screen name="DescobrirSenha" component={TelaDescorbrirSenha} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
