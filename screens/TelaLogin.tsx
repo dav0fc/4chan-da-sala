@@ -4,39 +4,39 @@ import '../global.css';
 import { TextInput, TouchableOpacity, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../App';
+import { RootStackParamList } from 'components/Navegador';
 
-type TelaLoginNavigationProp = StackNavigationProp<RootStackParamList, 'Seila'>;
+type TelaLoginNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function TelaLogin() {
   const navigation = useNavigation<TelaLoginNavigationProp>();
+
   return (
-    <>      
-    <View className="flex-1 items-center justify-center bg-[#ffe] bg-[url('./assets/fade.png')] bg-top bg-repeat-x px-4">
-      <Logo className=''/>
+    <View className="flex-1 items-center justify-center bg-[#ffe] px-4">
+      <Logo className="" />
+
       <TextInput
         className="w-96 border text-xl border-black rounded-lg px-4 py-5 mb-4 bg-[#fafafa] text-black"
-        placeholder="Seu RM" 
-      />  
+        placeholder="Seu RM"
+      />
 
       <TextInput
         className="w-96 border text-xl border-black rounded-lg px-4 py-4 mb-4 bg-[#fafafa] text-black"
         placeholder="Sua Senha"
-        secureTextEntry 
+        secureTextEntry
       />
-        
-      <TouchableOpacity className="" onPress={() => navigation.navigate('DescobrirSenha')}>
-        <Text
-        className="text-red-800 font-normal underline m-1 text-center">Descobrir minha senha
+
+      <TouchableOpacity onPress={() => navigation.navigate('DescobrirSenha')}>
+        <Text className="text-red-800 underline m-1 text-center">
+          Descobrir minha senha
         </Text>
       </TouchableOpacity>
-      
-      <TouchableOpacity className=" bg-red-800 rounded-lg px-6 py-3 m-4">
-        <Text 
-        className="text-[#fafafa] text-2xl font-semibold m-1 text-center">ENTRAR
+
+      <TouchableOpacity className="bg-red-800 rounded-lg px-6 py-3 m-4">
+        <Text className="text-[#fafafa] text-2xl font-semibold text-center">
+          ENTRAR
         </Text>
       </TouchableOpacity>
     </View>
-    </>
   );
 }
