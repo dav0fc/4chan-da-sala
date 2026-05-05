@@ -4,7 +4,12 @@ import TelaLogin from 'screens/TelaLogin';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  Seila: undefined;
+  DescobrirSenha: undefined;
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (

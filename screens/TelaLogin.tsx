@@ -3,9 +3,13 @@ import Logo from 'components/Logo';
 import '../global.css';
 import { TextInput, TouchableOpacity, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../App';
+
+type TelaLoginNavigationProp = StackNavigationProp<RootStackParamList, 'Seila'>;
 
 export default function TelaLogin() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<TelaLoginNavigationProp>();
   return (
     <>      
     <View className="flex-1 items-center justify-center bg-[#ffe] bg-[url('./assets/fade.png')] bg-top bg-repeat-x px-4">
@@ -29,7 +33,7 @@ export default function TelaLogin() {
       
       <TouchableOpacity className=" bg-red-800 rounded-lg px-6 py-3 m-4">
         <Text 
-        className="text-[#fafafa] text-2xl font-semibold m-1 text-center">SING UP
+        className="text-[#fafafa] text-2xl font-semibold m-1 text-center">ENTRAR
         </Text>
       </TouchableOpacity>
     </View>
